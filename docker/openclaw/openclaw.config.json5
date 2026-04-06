@@ -1,0 +1,122 @@
+{
+  agents: {
+    defaults: {
+      model: {
+        primary: "google/gemini-2.5-flash"
+      },
+      models: {
+        "google/gemini-2.5-flash": { alias: "Flash 2.5" },
+        "google/gemini-3-flash-preview": { alias: "Flash 3.0" },
+        "google/gemini-3.0-pro-preview": { alias: "Pro 3.0" },
+        "google/gemini-3.1-pro-preview": { alias: "Pro 3.1" }
+      }
+    },
+    list: [
+      {
+        id: "general",
+        workspace: "/app/workspaces/general"
+      },
+      {
+        id: "marketing",
+        workspace: "/app/workspaces/marketing"
+      },
+      {
+        id: "research",
+        workspace: "/app/workspaces/research",
+        model: { primary: "google/gemini-3.1-pro-preview" }
+      },
+      {
+        id: "youtube",
+        workspace: "/app/workspaces/youtube"
+      }
+    ]
+  },
+  tools: {
+    profile: "full",
+    allow: [
+      "group:runtime",
+      "group:fs",
+      "group:web",
+      "group:ui",
+      "group:sessions"
+    ],
+    exec: {
+      security: "full",
+      strictInlineEval: false
+    }
+  },
+  bindings: [
+    {
+      agentId: "general",
+      match: { channel: "telegram", accountId: "general" }
+    },
+    {
+      agentId: "marketing",
+      match: { channel: "telegram", accountId: "marketing" }
+    },
+    {
+      agentId: "research",
+      match: { channel: "telegram", accountId: "research" }
+    },
+    {
+      agentId: "youtube",
+      match: { channel: "telegram", accountId: "youtube" }
+    }
+  ],
+  channels: {
+    telegram: {
+      accounts: {
+        general: {
+          enabled: true,
+          dmPolicy: "pairing",
+          botToken: "${TELEGRAM_TOKEN_GENERAL}",
+          execApprovals: {
+            enabled: true,
+            approvers: ["${TELEGRAM_ID}"],
+            target: "dm"
+          }
+        },
+        research: {
+          enabled: true,
+          dmPolicy: "pairing",
+          botToken: "${TELEGRAM_TOKEN_RESEARCH}",
+          execApprovals: {
+            enabled: true,
+            approvers: ["${TELEGRAM_ID}"],
+            target: "dm"
+          }
+        },
+        marketing: {
+          enabled: true,
+          dmPolicy: "pairing",
+          botToken: "${TELEGRAM_TOKEN_MARKETING}",
+          execApprovals: {
+            enabled: true,
+            approvers: ["${TELEGRAM_ID}"],
+            target: "dm"
+          }
+        },
+        youtube: {
+          enabled: true,
+          dmPolicy: "pairing",
+          botToken: "${TELEGRAM_TOKEN_YOUTUBE}",
+          execApprovals: {
+            enabled: true,
+            approvers: ["${TELEGRAM_ID}"],
+            target: "dm"
+          }
+        }
+      }
+    },
+    signal: {
+      enabled: false,
+      account: "${BOT_PHONE_NUMBER}",
+      httpHost: "signal-api",
+      httpPort: 8080,
+      dmPolicy: "pairing",
+      autoStart: false,
+      allowFrom: ["${OWNER_PHONE_NUMBER}"],
+      cliPath: "/bin/true"
+    }
+  }
+}

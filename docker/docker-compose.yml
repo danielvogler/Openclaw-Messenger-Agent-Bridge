@@ -1,0 +1,53 @@
+services:
+  signal-api:
+    image: bbernhard/signal-cli-rest-api:latest
+    container_name: signal-api
+    restart: unless-stopped
+    environment:
+      - MODE=json-rpc
+    ports:
+      # Expose 8080 to the VM network (which we opened internally via Terraform)
+      - "8080:8080"
+    volumes:
+      # Persistent mapping as requested in your architecture
+      - /home/${VM_USERNAME}/messenger-data:/home/.local/share/signal-cli
+
+  openclaw-orchestrator:
+    build: ./openclaw
+    container_name: openclaw
+    restart: unless-stopped
+    ports:
+          - "18789:18789"
+    environment:
+      # GOOGLE AI STUDIO
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_API_KEY=${GOOGLE_API_KEY}
+
+      # Telegram
+      - TELEGRAM_TOKEN_GENERAL=${TELEGRAM_TOKEN_GENERAL}
+      - TELEGRAM_TOKEN_MARKETING=${TELEGRAM_TOKEN_MARKETING}
+      - TELEGRAM_TOKEN_RESEARCH=${TELEGRAM_TOKEN_RESEARCH}
+      - TELEGRAM_TOKEN_YOUTUBE=${TELEGRAM_TOKEN_YOUTUBE}
+      - TELEGRAM_ID=${TELEGRAM_ID}
+
+      # Github
+      - GITHUB_PAT=${GITHUB_PAT}
+
+      # Connect to the local Signal REST API container using exact OpenClaw variables
+      - OPENCLAW_CONFIG_PATH=/app/config/openclaw.config.json5
+      - OPENCLAW_SOUL_PATH=/app/config/soul.yaml # Look in the config folder instead
+
+      # Routing prompts to Vertex AI
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - VERTEX_AI_PROJECT_ID=${GCP_PROJECT_ID}
+      - VERTEX_AI_LOCATION=europe-west6
+      - GOOGLE_APPLICATION_CREDENTIALS=
+
+      # Security Whitelisting
+      - OWNER_PHONE_NUMBER=${OWNER_PHONE_NUMBER}
+      - BOT_PHONE_NUMBER=${BOT_PHONE_NUMBER}
+    volumes:
+      - /home/${VM_USERNAME}/openclaw-data:/home/node/.openclaw
+      - /home/${VM_USERNAME}/openclaw:/app/config
+      - /home/${VM_USERNAME}/openclaw/workspaces:/app/workspaces
+      - /home/${VM_USERNAME}/openclaw/skills:/home/node/.openclaw/skills

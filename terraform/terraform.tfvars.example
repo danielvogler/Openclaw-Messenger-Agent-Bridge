@@ -1,0 +1,5 @@
+project_id    = "YOUR_GCP_PROJECT_ID"
+region        = "us-central1"
+zone          = "us-central1-a"
+instance_name = "messenger-agent-bridge-vm"
+machine_type  = "e2-medium"
