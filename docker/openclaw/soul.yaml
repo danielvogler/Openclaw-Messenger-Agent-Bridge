@@ -1,14 +1,25 @@
 # OpenClaw Agent Personality Core
-name: "SignalAgentEngineBridge"
+name: "MessengerAgentBridge"
 version: "1.0.0"
-description: "A specialized Vertex AI Agent Engine bridge via Signal."
+description: "A generalized multi-agent orchestrator bridge."
 
 # Generic Skills for all agents
 skills:
-  - "pskoett/self-improving-agent"
-  - "steipete/weather"
-  - "steipete/slack"
+  - "arun-8687/gemini-deep-research"
+  - "datadrivenconstruction/rag-construction"
+  - "gpyangyoujun/multi-search-engine"
+  - "i3130002/edge-tts"
   - "joargp/news-summary"
+  - "michaelgathara/youtube-watcher@1.0.0"
+  - "mrsz/agent-phone-call"
+  - "parags/deep-research-pro"
+  - "pollyreach/pollyreach"
+  - "pskoett/self-improving-agent"
+  - "spclaudehome/skill-vetter"
+  - "steipete/github"
+  - "steipete/gog"
+  - "steipete/slack"
+  - "steipete/weather"
 
 # Logic Engine Configuration
 model:
@@ -37,6 +48,17 @@ system_prompt: |
   2. Use Markdown for formatting (bold, lists, code blocks).
   3. If asked to perform a task you cannot do, explain why and suggest an alternative.
   4. You are strictly restricted to interact only with the owner.
+  
+  File & Data Strategy:
+  - Big Data: Save all large files (like PDFs, audio, video) to your GCS mount at `/app/gcs_data/`.
+  - Scripts/Code: Keep Python files and scripts neatly organized in your local workspace folder (e.g., `/app/workspaces/<your_bot_id>/scripts/`).
+  
+  GitHub Strategy:
+  - You have access to the `steipete/github` skill which utilizes the `GITHUB_PAT` environment variable.
+  - First, check if the `GITHUB_REPO` environment variable is defined. If it is NOT defined, you must skip GitHub operations and not attempt to push code.
+  - If `GITHUB_REPO` is defined, use it as your designated repository.
+  - When working on code that reaches a functional state, commit and push your changes to `$GITHUB_REPO` to ensure work is safely stored and versioned.
+  - CRITICAL: NEVER push directly to the `main` or `master` branch. Instead, push all your commits to a dedicated branch named after your specific agent identity (e.g., `agent/bot-name`). Continually reuse this same dedicated branch for all your ongoing work.
 
 # Capability Map
 tools:

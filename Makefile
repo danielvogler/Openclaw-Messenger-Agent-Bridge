@@ -6,6 +6,9 @@ ifneq (,$(wildcard ./.env))
     export
 endif
 
+# Map env BUCKET_NAME to Terraform's expected variable
+export TF_VAR_data_bucket_name ?= $(BUCKET_NAME)
+
 # Dynamically fetch VM details from Terraform output, with fallbacks
 TF_INSTANCE_NAME = $(shell cd terraform && terraform output -raw instance_name 2>/dev/null || echo "messenger-agent-bridge-vm")
 TF_ZONE = $(shell cd terraform && terraform output -raw instance_zone 2>/dev/null || echo "us-central1-a")
@@ -38,6 +41,7 @@ help:
 	@echo "  vm-start           - Start the GCP VM via gcloud"
 	@echo "  vm-stop            - Stop the GCP VM via gcloud to save costs"
 	@echo "  vm-ssh             - SSH into the VM via gcloud"
+	@echo "  gcs-mount          - Mount the GCS data bucket to the VM"
 	@echo ""
 	@echo "--- OPENCLAW ---"
 	@echo "  openclaw-logs      - Fetch OpenClaw container logs"
@@ -121,6 +125,9 @@ vm-stop:
 
 vm-ssh:
 	@./scripts/vm/vm-ssh.sh
+
+gcs-mount:
+	@./scripts/gcs/gcs-mount.sh
 
 # ==========================================
 # DOCKER DEPLOYMENT SECTION

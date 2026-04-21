@@ -23,15 +23,21 @@ services:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - GEMINI_API_KEY=${GOOGLE_API_KEY}
 
-      # Telegram
-      - TELEGRAM_TOKEN_GENERAL=${TELEGRAM_TOKEN_GENERAL}
-      - TELEGRAM_TOKEN_MARKETING=${TELEGRAM_TOKEN_MARKETING}
-      - TELEGRAM_TOKEN_RESEARCH=${TELEGRAM_TOKEN_RESEARCH}
-      - TELEGRAM_TOKEN_YOUTUBE=${TELEGRAM_TOKEN_YOUTUBE}
-      - TELEGRAM_ID=${TELEGRAM_ID}
+      # Telegram Bots
+      - TELEGRAM_TOKEN_BOT_1=${TELEGRAM_TOKEN_BOT_1}
+      - TELEGRAM_ID_BOT_1=${TELEGRAM_ID_BOT_1}
+      - TELEGRAM_TOKEN_BOT_2=${TELEGRAM_TOKEN_BOT_2}
+      - TELEGRAM_ID_BOT_2=${TELEGRAM_ID_BOT_2}
+      - TELEGRAM_TOKEN_BOT_3=${TELEGRAM_TOKEN_BOT_3}
+      - TELEGRAM_ID_BOT_3=${TELEGRAM_ID_BOT_3}
+      - TELEGRAM_TOKEN_BOT_4=${TELEGRAM_TOKEN_BOT_4}
+      - TELEGRAM_ID_BOT_4=${TELEGRAM_ID_BOT_4}
+      - TELEGRAM_TOKEN_BOT_5=${TELEGRAM_TOKEN_BOT_5}
+      - TELEGRAM_ID_BOT_5=${TELEGRAM_ID_BOT_5}
 
       # Github
       - GITHUB_PAT=${GITHUB_PAT}
+      - GITHUB_REPO=${GITHUB_REPO}
 
       # Connect to the local Signal REST API container using exact OpenClaw variables
       - OPENCLAW_CONFIG_PATH=/app/config/openclaw.config.json5
@@ -51,3 +57,4 @@ services:
       - /home/${VM_USERNAME}/openclaw:/app/config
       - /home/${VM_USERNAME}/openclaw/workspaces:/app/workspaces
       - /home/${VM_USERNAME}/openclaw/skills:/home/node/.openclaw/skills
+      - /home/${VM_USERNAME}/gcs-data:/app/gcs_data:rshared
