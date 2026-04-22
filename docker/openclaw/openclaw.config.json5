@@ -2,34 +2,27 @@
   agents: {
     defaults: {
       model: {
-        primary: "google/gemini-2.5-flash"
+        primary: "google/gemini-3-flash-preview",
+        fallbacks: [
+          "google/gemini-3.1-pro-preview",
+          "google/gemini-2.5-flash",
+          "google/gemini-3-pro-image-preview",
+        ],
       },
       models: {
         "google/gemini-2.5-flash": { alias: "Flash 2.5" },
-        "google/gemini-3-flash-preview": { alias: "Flash 3.0" },
-        "google/gemini-3.0-pro-preview": { alias: "Pro 3.0" },
-        "google/gemini-3.1-pro-preview": { alias: "Pro 3.1" }
-      }
+        "google/gemini-3-flash-preview": { alias: "Gemini 3 Flash" },
+        "google/gemini-3.1-pro-preview": { alias: "Gemini 3.1 Pro" },
+        "google/gemini-3-pro-image-preview": { alias: "Gemini Pro Image" },
+      },
     },
     list: [
-      {
-        id: "general",
-        workspace: "/app/workspaces/general"
-      },
-      {
-        id: "marketing",
-        workspace: "/app/workspaces/marketing"
-      },
-      {
-        id: "research",
-        workspace: "/app/workspaces/research",
-        model: { primary: "google/gemini-3.1-pro-preview" }
-      },
-      {
-        id: "youtube",
-        workspace: "/app/workspaces/youtube"
-      }
-    ]
+      { id: "general", workspace: "/app/workspaces/general" },
+      { id: "marketing", workspace: "/app/workspaces/marketing" },
+      { id: "research", workspace: "/app/workspaces/research" },
+      { id: "youtube", workspace: "/app/workspaces/youtube" },
+      { id: "bot_5", workspace: "/app/workspaces/bot_5" },
+    ],
   },
   tools: {
     profile: "full",
@@ -38,30 +31,31 @@
       "group:fs",
       "group:web",
       "group:ui",
-      "group:sessions"
+      "group:sessions",
     ],
     exec: {
       security: "full",
-      strictInlineEval: false
-    }
+      strictInlineEval: false,
+    },
   },
   bindings: [
     {
       agentId: "general",
-      match: { channel: "telegram", accountId: "general" }
+      match: { channel: "telegram", accountId: "general" },
     },
     {
       agentId: "marketing",
-      match: { channel: "telegram", accountId: "marketing" }
+      match: { channel: "telegram", accountId: "marketing" },
     },
     {
       agentId: "research",
-      match: { channel: "telegram", accountId: "research" }
+      match: { channel: "telegram", accountId: "research" },
     },
     {
       agentId: "youtube",
-      match: { channel: "telegram", accountId: "youtube" }
-    }
+      match: { channel: "telegram", accountId: "youtube" },
+    },
+    { agentId: "bot_5", match: { channel: "telegram", accountId: "bot_5" } },
   ],
   channels: {
     telegram: {
@@ -69,44 +63,54 @@
         general: {
           enabled: true,
           dmPolicy: "pairing",
-          botToken: "${TELEGRAM_TOKEN_GENERAL}",
+          botToken: "${TELEGRAM_TOKEN_BOT_1}",
           execApprovals: {
             enabled: true,
-            approvers: ["${TELEGRAM_ID}"],
-            target: "dm"
-          }
-        },
-        research: {
-          enabled: true,
-          dmPolicy: "pairing",
-          botToken: "${TELEGRAM_TOKEN_RESEARCH}",
-          execApprovals: {
-            enabled: true,
-            approvers: ["${TELEGRAM_ID}"],
-            target: "dm"
-          }
+            approvers: ["${TELEGRAM_ID_BOT_1}"],
+            target: "dm",
+          },
         },
         marketing: {
           enabled: true,
           dmPolicy: "pairing",
-          botToken: "${TELEGRAM_TOKEN_MARKETING}",
+          botToken: "${TELEGRAM_TOKEN_BOT_2}",
           execApprovals: {
             enabled: true,
-            approvers: ["${TELEGRAM_ID}"],
-            target: "dm"
-          }
+            approvers: ["${TELEGRAM_ID_BOT_2}"],
+            target: "dm",
+          },
+        },
+        research: {
+          enabled: true,
+          dmPolicy: "pairing",
+          botToken: "${TELEGRAM_TOKEN_BOT_3}",
+          execApprovals: {
+            enabled: true,
+            approvers: ["${TELEGRAM_ID_BOT_3}"],
+            target: "dm",
+          },
         },
         youtube: {
           enabled: true,
           dmPolicy: "pairing",
-          botToken: "${TELEGRAM_TOKEN_YOUTUBE}",
+          botToken: "${TELEGRAM_TOKEN_BOT_4}",
           execApprovals: {
             enabled: true,
-            approvers: ["${TELEGRAM_ID}"],
-            target: "dm"
-          }
-        }
-      }
+            approvers: ["${TELEGRAM_ID_BOT_4}"],
+            target: "dm",
+          },
+        },
+        bot_5: {
+          enabled: true,
+          dmPolicy: "pairing",
+          botToken: "${TELEGRAM_TOKEN_BOT_5}",
+          execApprovals: {
+            enabled: true,
+            approvers: ["${TELEGRAM_ID_BOT_5}"],
+            target: "dm",
+          },
+        },
+      },
     },
     signal: {
       enabled: false,
@@ -116,7 +120,7 @@
       dmPolicy: "pairing",
       autoStart: false,
       allowFrom: ["${OWNER_PHONE_NUMBER}"],
-      cliPath: "/bin/true"
-    }
-  }
+      cliPath: "/bin/true",
+    },
+  },
 }

@@ -17,3 +17,8 @@ output "instance_internal_ip" {
   description = "The internal IP address of the VM"
   value       = google_compute_instance.messenger_bridge.network_interface.0.network_ip
 }
+
+output "data_bucket_name" {
+  description = "The name of the GCS bucket for big data"
+  value       = google_storage_bucket.data_bucket.name
+}

@@ -18,6 +18,22 @@ resource "google_project_iam_member" "bot_sa_vertex_ai" {
   member  = "serviceAccount:${google_service_account.bot_sa.email}"
 }
 
+# Create a GCS bucket for big data
+resource "google_storage_bucket" "data_bucket" {
+  name          = var.data_bucket_name
+  location      = var.region
+  force_destroy = true
+
+  uniform_bucket_level_access = true
+}
+
+# Grant Storage Object Admin role to the bot Service Account
+resource "google_storage_bucket_iam_member" "bot_sa_storage_admin" {
+  bucket = google_storage_bucket.data_bucket.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.bot_sa.email}"
+}
+
 resource "google_compute_instance" "messenger_bridge" {
   name         = var.instance_name
   machine_type = var.machine_type

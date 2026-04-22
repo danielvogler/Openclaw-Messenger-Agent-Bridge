@@ -26,3 +26,9 @@ variable "machine_type" {
   type        = string
   default     = "e2-medium"
 }
+
+variable "data_bucket_name" {
+  description = "Name of the GCS bucket for big data storage"
+  type        = string
+  default     = "messenger-agent-data-bucket"
+}

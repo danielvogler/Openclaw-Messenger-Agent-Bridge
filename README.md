@@ -67,6 +67,7 @@ graph LR
         OC --> A1[Agent Workspace 1]
         OC --> A2[Agent Workspace 2]
         OC -.-> AN[Agent Workspace N]
+        OC -->|Mounts| GCS_FUSE[GCS Bucket Mounted]
     end
 
     subgraph Cloud_AI [Cloud AI]
@@ -75,8 +76,12 @@ graph LR
         AN -.->|LLM Prompts & Tools| VX
     end
 
+    subgraph Storage [Google Cloud Storage]
+        GCS_FUSE -->|gcsfuse| BUCKET[Big Data Bucket]
+    end
+
     classDef gcp fill:#e3f2fd,stroke:#4285f4,stroke-width:2px;
-    class GCP_VM gcp;
+    class GCP_VM,Storage gcp;
 ```
 
 - **Infrastructure:** Google Cloud Platform (GCP) running Ubuntu 24.04.
@@ -106,14 +111,20 @@ make tf-apply
 ```
 *(This automatically creates the VM, applies firewall rules, and uses a startup script to install Docker).*
 
-### 3. Deploy the Containers
-Once the VM is running, deploy the Signal and OpenClaw containers:
+### 3. Mount GCS Storage
+After provisioning the VM, mount the Google Cloud Storage bucket to your VM. This bucket is used for persisting big files (like PDFs or audio files) that the agents might interact with.
+```bash
+make gcs-mount
+```
+
+### 4. Deploy the Containers
+Once the VM is running and the bucket is mounted, deploy the Signal and OpenClaw containers:
 ```bash
 make docker-deploy
 ```
 *(This command copies the `docker-compose.yml` to your VM and starts the containers in the background).*
 
-### 4. Connect Your Messengers
+### 5. Connect Your Messengers
 
 You can choose to connect either Telegram or Signal, or both!
 
