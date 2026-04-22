@@ -16,6 +16,6 @@ gcloud compute ssh "$VM_USERNAME@$TF_INSTANCE_NAME" --zone="$TF_ZONE" --project=
     echo "Mounting bucket..."
     # Ensure fuse allows other users to access the mount
     sudo bash -c 'grep -q "^user_allow_other" /etc/fuse.conf || echo "user_allow_other" >> /etc/fuse.conf'
-    gcsfuse -o allow_other --implicit-dirs $BUCKET_NAME ~/gcs-data
+    gcsfuse -o allow_other --file-mode=0777 --dir-mode=0777 --implicit-dirs $BUCKET_NAME ~/gcs-data
   fi
 EOF

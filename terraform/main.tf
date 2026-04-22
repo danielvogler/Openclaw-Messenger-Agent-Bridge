@@ -30,7 +30,7 @@ resource "google_storage_bucket" "data_bucket" {
 # Grant Storage Object Admin role to the bot Service Account
 resource "google_storage_bucket_iam_member" "bot_sa_storage_admin" {
   bucket = google_storage_bucket.data_bucket.name
-  role   = "roles/storage.objectAdmin"
+  role   = "roles/storage.admin"
   member = "serviceAccount:${google_service_account.bot_sa.email}"
 }
 
