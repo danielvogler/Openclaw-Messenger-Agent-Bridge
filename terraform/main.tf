@@ -43,7 +43,7 @@ resource "google_compute_instance" "messenger_bridge" {
     initialize_params {
       # Prefer 24.04 LTS (Ubuntu) as requested
       image = "ubuntu-os-cloud/ubuntu-2404-lts-amd64"
-      size  = 20
+      size  = 50
     }
   }
 

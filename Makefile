@@ -41,11 +41,14 @@ help:
 	@echo "  vm-start           - Start the GCP VM via gcloud"
 	@echo "  vm-stop            - Stop the GCP VM via gcloud to save costs"
 	@echo "  vm-ssh             - SSH into the VM via gcloud"
+	@echo "  vm-stats           - Check memory and CPU usage on the VM"
 	@echo "  gcs-mount          - Mount the GCS data bucket to the VM"
 	@echo ""
 	@echo "--- OPENCLAW ---"
 	@echo "  openclaw-logs      - Fetch OpenClaw container logs"
 	@echo "  openclaw-fix-gateway - Approves any pending device or operator requests to unlock AI skills"
+	@echo "  openclaw-tunnel    - Create an SSH tunnel to access the OpenClaw dashboard locally"
+	@echo "  openclaw-token     - Fetch the OpenClaw Gateway Token from the VM"
 	@echo ""
 	@echo "--- DEPLOYMENT ---"
 	@echo "  docker-deploy      - SCP docker-compose.yml to VM and start containers"
@@ -126,6 +129,9 @@ vm-stop:
 vm-ssh:
 	@./scripts/vm/vm-ssh.sh
 
+vm-stats:
+	@gcloud compute ssh "$${VM_USERNAME}@$${TF_INSTANCE_NAME}" --zone="$${TF_ZONE}" --project="$${GCP_PROJECT_ID}" --command="free -h && echo '' && top -b -n 1 | head -n 10"
+
 gcs-mount:
 	@./scripts/gcs/gcs-mount.sh
 
@@ -142,6 +148,12 @@ docker-deploy:
 
 openclaw-logs:
 	@./scripts/openclaw/openclaw-logs.sh
+
+openclaw-tunnel:
+	@./scripts/openclaw/openclaw-tunnel.sh
+
+openclaw-token:
+	@./scripts/openclaw/openclaw-token.sh
 
 openclaw-fix-gateway:
 	@./scripts/openclaw/openclaw-fix-gateway.sh
