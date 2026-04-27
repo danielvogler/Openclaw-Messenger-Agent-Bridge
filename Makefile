@@ -9,9 +9,9 @@ endif
 # Map env BUCKET_NAME to Terraform's expected variable
 export TF_VAR_data_bucket_name ?= $(BUCKET_NAME)
 
-# Dynamically fetch VM details from Terraform output, with fallbacks
-TF_INSTANCE_NAME = $(shell cd terraform && terraform output -raw instance_name 2>/dev/null || echo "messenger-agent-bridge-vm")
-TF_ZONE = $(shell cd terraform && terraform output -raw instance_zone 2>/dev/null || echo "us-central1-a")
+# Dynamically fetch VM details from Terraform output, with fallbacks to .env
+TF_INSTANCE_NAME ?= $(shell cd terraform && terraform output -raw instance_name 2>/dev/null || echo "$${GCP_VM_NAME:-agent-bridge-vm}")
+TF_ZONE ?= $(shell cd terraform && terraform output -raw instance_zone 2>/dev/null || echo "$(GCP_ZONE)")
 export TF_INSTANCE_NAME
 export TF_ZONE
 
@@ -70,12 +70,12 @@ help:
 
 lint:
 	@echo "Running ShellCheck on scripts..."
-	@shellcheck scripts/*/*.sh
+	@find scripts -name "*.sh" -exec shellcheck {} +
 	@echo "All scripts passed!"
 
 fmt:
 	@echo "Formatting scripts with shfmt..."
-	@shfmt -i 2 -ci -w scripts/*/*.sh
+	@find scripts -name "*.sh" -exec shfmt -i 2 -ci -w {} +
 	@echo "Formatting complete!"
 
 # ==========================================
@@ -83,17 +83,17 @@ fmt:
 # ==========================================
 
 gcloud-install:
-	@./scripts/gcloud/gcloud-install.sh
+	@./scripts/gcp/gcloud/gcloud-install.sh
 
 gcloud-login:
-	@./scripts/gcloud/gcloud-login.sh
+	@./scripts/gcp/gcloud/gcloud-login.sh
 
 # ==========================================
 # TERRAFORM SECTION
 # ==========================================
 
 tf-install:
-	@./scripts/terraform/tf-install.sh
+	@./scripts/gcp/terraform/tf-install.sh
 
 tf-init:
 	@cd terraform && terraform init
@@ -118,23 +118,53 @@ tf-destroy:
 # ==========================================
 
 vm-start:
-	@./scripts/vm/vm-start.sh
+	@./scripts/gcp/vm/vm-start.sh
 
 vm-stop:
-	@./scripts/vm/vm-stop.sh
+	@./scripts/gcp/vm/vm-stop.sh
 
 vm-ssh:
-	@./scripts/vm/vm-ssh.sh
+	@./scripts/gcp/vm/vm-ssh.sh
 
 gcs-mount:
-	@./scripts/gcs/gcs-mount.sh
+	@./scripts/gcp/gcs/gcs-mount.sh
 
 # ==========================================
-# DOCKER DEPLOYMENT SECTION
+# LOCAL MAC DEPLOYMENT SECTION
+# ==========================================
+
+local-deploy:
+	@./scripts/local/deploy.sh
+
+local-logs:
+	@docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.local.yml logs -f
+
+local-dashboard:
+	@echo "Opening OpenClaw Dashboard in your browser..."
+	@TOKEN=$$(grep -o '"token": "[^"]*"' ~/.openclaw-local-data/openclaw/openclaw.config.json5 | head -1 | cut -d'"' -f4); \
+	open "http://localhost:18789/#token=$$TOKEN"
+
+mac-disable-sleep:
+	@chmod +x scripts/local/mac-disable-sleep.sh
+	@./scripts/local/mac-disable-sleep.sh
+
+mac-docker-autostart:
+	@chmod +x scripts/local/mac-docker-autostart.sh
+	@./scripts/local/mac-docker-autostart.sh
+
+mac-server-setup: mac-disable-sleep mac-docker-autostart
+	@echo "Mac Mini successfully configured as a 24/7 always-on server!"
+
+download-data:
+	@chmod +x scripts/local/download-data.sh
+	@./scripts/local/download-data.sh
+
+# ==========================================
+# DOCKER DEPLOYMENT SECTION (GCP VM)
 # ==========================================
 
 docker-deploy:
-	@./scripts/docker/docker-deploy.sh
+	@./scripts/gcp/deploy.sh
 
 # ==========================================
 # OPENCLAW SECTION

@@ -246,3 +246,7 @@ vertex-key.json
 *.p8
 secrets/
 .roo/
+-e 
+# Local data directory
+data/
+

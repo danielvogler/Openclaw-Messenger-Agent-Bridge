@@ -54,7 +54,7 @@ resource "google_compute_instance" "messenger_bridge" {
     }
   }
 
-  metadata_startup_script = file("${path.module}/../scripts/startup.sh")
+  metadata_startup_script = file("${path.module}/../scripts/gcp/vm/startup.sh")
 
   tags = ["messenger-bridge", "allow-internal-8080"]
 
