@@ -32,6 +32,7 @@
       "group:web",
       "group:ui",
       "group:sessions",
+      "group:audio",
     ],
     exec: {
       security: "full",
