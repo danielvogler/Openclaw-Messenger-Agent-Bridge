@@ -49,6 +49,8 @@ This repository includes pre-configured agent workspaces demonstrating various c
 </div>
 
 ## Architecture
+
+### Cloud Deployment (GCP VM)
 ```mermaid
 graph LR
     subgraph Client
@@ -58,33 +60,48 @@ graph LR
 
     subgraph GCP_VM [Google Cloud VM]
         subgraph Docker_Network [Docker Compose Network]
-            SA[Signal-CLI REST API Container]
-            OC[OpenClaw Orchestrator Container]
+            SA[Signal-CLI REST API]
+            OC[OpenClaw Orchestrator]
         end
-        S -->|Encrypted Protocol| SA
+        S -->|Encrypted| SA
         T -->|Bot API| OC
-        SA -->|Internal REST| OC
-        OC --> A1[Agent Workspace 1]
-        OC --> A2[Agent Workspace 2]
-        OC -.-> AN[Agent Workspace N]
+        SA -->|REST| OC
+        OC --> A1[Agent Workspaces]
         OC -->|Mounts| GCS_FUSE[GCS Bucket Mounted]
     end
 
     subgraph Cloud_AI [Cloud AI]
-        A1 -->|LLM Prompts & Tools| VX["Google AI Studio (Gemini)"]
-        A2 -->|LLM Prompts & Tools| VX
-        AN -.->|LLM Prompts & Tools| VX
+        A1 -->|Prompts & Tools| VX["Google AI Studio"]
     end
-
-    subgraph Storage [Google Cloud Storage]
-        GCS_FUSE -->|gcsfuse| BUCKET[Big Data Bucket]
-    end
-
-    classDef gcp fill:#e3f2fd,stroke:#4285f4,stroke-width:2px;
-    class GCP_VM,Storage gcp;
 ```
 
-- **Infrastructure:** Google Cloud Platform (GCP) running Ubuntu 24.04.
+### Local Deployment (Local Mac Server)
+```mermaid
+graph LR
+    subgraph Client
+        U[User] --> S[Signal App]
+        U --> T[Telegram Apps / Multiple Bots]
+    end
+
+    subgraph Local_Mac [Local Mac Server]
+        subgraph Docker_Network [Docker Compose Network]
+            SA[Signal-CLI REST API]
+            OC[OpenClaw Orchestrator]
+        end
+        S -->|Encrypted| SA
+        T -->|Bot API| OC
+        SA -->|REST| OC
+        OC --> A1[Agent Workspaces]
+        OC -->|Mounts| LOCAL_DATA[~/.openclaw-local-data]
+    end
+
+    subgraph Cloud_AI [Cloud AI]
+        A1 -->|Prompts & Tools| VX["Google AI Studio"]
+    end
+```
+
+- **Cloud Infrastructure:** Google Cloud Platform (GCP) running Ubuntu 24.04.
+- **Local Infrastructure:** Any Local Mac Server running Docker Desktop.
 - **Network Layer:** `bbernhard/signal-cli-rest-api` handles encryption and the Signal protocol.
 - **Orchestrator Layer:** OpenClaw routes prompts securely from your Telegram or Signal number to Google AI Studio.
 

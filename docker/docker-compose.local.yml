@@ -1,0 +1,23 @@
+services:
+  signal-api:
+    volumes:
+      # Persistent mapping for Local setup (outside repo)
+      - ${LOCAL_DATA_DIR:-~/.openclaw-local-data}/messenger-data:/home/.local/share/signal-cli
+
+  openclaw-orchestrator:
+    environment:
+      # Disable Vertex AI routing locally to force standard Google AI Studio
+      - VERTEX_AI_PROJECT_ID=
+      - GCP_PROJECT_ID=
+    volumes:
+      - ${LOCAL_DATA_DIR:-~/.openclaw-local-data}/openclaw-data:/home/node/.openclaw
+      - ${LOCAL_DATA_DIR:-~/.openclaw-local-data}/openclaw:/app/config
+      - ${LOCAL_DATA_DIR:-~/.openclaw-local-data}/openclaw/workspaces:/app/workspaces
+      - ${LOCAL_DATA_DIR:-~/.openclaw-local-data}/openclaw/skills:/home/node/.openclaw/skills
+      - ${LOCAL_DATA_DIR:-~/.openclaw-local-data}/gcs-data:/app/gcs_data
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400

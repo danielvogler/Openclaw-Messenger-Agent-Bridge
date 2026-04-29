@@ -17,8 +17,11 @@ RUN apt-get update && \
       zip \
       tar \
       chromium \
-      chromium-driver && \
+      chromium-driver \
+      ffmpeg && \
     rm -rf /var/lib/apt/lists/*
+
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 # Set up a global virtual environment that the 'node' user owns
 RUN python3 -m venv /opt/venv && \
