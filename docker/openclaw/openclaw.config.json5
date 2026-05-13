@@ -27,12 +27,15 @@
   tools: {
     profile: "full",
     allow: [
-      "group:runtime",
+      "group:automation",
       "group:fs",
-      "group:web",
-      "group:ui",
+      "group:media",
+      "group:memory",
+      "group:messaging",
+      "group:runtime",
       "group:sessions",
-      "group:audio",
+      "group:ui",
+      "group:web",
     ],
     exec: {
       security: "full",
