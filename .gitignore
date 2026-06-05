@@ -249,7 +249,3 @@ secrets/
 -e 
 # Local data directory
 data/
-
-# Planning/task files
-implementation_plan.md
-task.md
